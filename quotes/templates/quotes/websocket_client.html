@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h1>WebSocket Client</h1>
+    <div id="messages">
+        <p>Ожидание данных...</p>
+    </div>
+
+    <script>
+        // Создаем WebSocket-соединение
+        const socket = new WebSocket("ws://127.0.0.1:8000/ws/crypto/");
+
+        // Обработка открытия соединения
+        socket.onopen = function(event) {
+            console.log("WebSocket соединение установлено.");
+        };
+
+        // Обработка входящих сообщений
+        socket.onmessage = function(event) {
+            console.log("Получено сообщение:", event.data);
+
+            // Парсим JSON-данные
+            const data = JSON.parse(event.data);
+
+            // Отображаем данные на странице
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML = `
+                <p><strong>Криптопара:</strong> ${data.crypto_pair}</p>
+                <p><strong>Цена:</strong> ${data.price}</p>
+                <p><strong>Время:</strong> ${data.created_at}</p>
+            `;
+        };
+
+        // Обработка закрытия соединения
+        socket.onclose = function(event) {
+            console.log("WebSocket соединение закрыто.");
+        };
+
+        // Обработка ошибок
+        socket.onerror = function(error) {
+            console.error("Ошибка WebSocket:", error);
+        };
+    </script>
+</body>
+</html>
